@@ -31,7 +31,7 @@ public class Controller implements Initializable {
         head.setFocusTraversable(true);
         head.setOnKeyPressed(event -> {
             if(event.getCode() == KeyCode.DOWN) {
-                System.out.println("Down Pressed");
+                System.out.println("Down Pressed : newY = " + head.getCenterY());
             }else if(event.getCode() == KeyCode.UP) {
                 System.out.println("Up Pressed");
             }else if(event.getCode() == KeyCode.LEFT) {

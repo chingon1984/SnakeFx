@@ -1,7 +1,7 @@
 package com.chingon;
 
 public class PositionCoordinates {
-    double posX, posY;
+    private double posX, posY;
 
     PositionCoordinates(double posX, double posY) {
         this.posX = posX;
