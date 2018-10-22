@@ -4,7 +4,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class Snake {
     private ArrayList<Circle> snakeBody;
@@ -12,15 +11,14 @@ public class Snake {
     private final Circle head;
 
 
-    Snake() {
+    Snake(int segments) {
         snakeBody = new ArrayList<>();
         head = new Circle(100, 100, HEAD_RADIUS, Color.RED);
-
-        snakeBody.add(head);
-
+        for(int i=1; i<=segments; i++)
+            addSegmentToBody();
     }
 
-    List<Circle> getBody() {
+    ArrayList<Circle> getBody() {
         return snakeBody;
     }
 
@@ -50,8 +48,15 @@ public class Snake {
     }
 
     private PositionCoordinates getPositionOfLastSegment() {
-        double posX = snakeBody.get(snakeBody.size() - 1).getCenterX();
-        double posY = snakeBody.get(snakeBody.size() - 1).getCenterY();
+        double posX = 0;
+        double posY = 0;
+        if(snakeBody.size() > 0) {
+            posX = snakeBody.get(snakeBody.size() - 1).getCenterX();
+            posY = snakeBody.get(snakeBody.size() - 1).getCenterY();
+        }else {
+            posX = head.getCenterX();
+            posY = head.getCenterY();
+        }
         return new PositionCoordinates(posX, posY);
     }
 
