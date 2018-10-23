@@ -3,6 +3,7 @@ package com.chingon;
 import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Circle;
 
@@ -17,11 +18,10 @@ public class Controller implements Initializable {
     private Snake snake;
     private Circle head;
     private final static int SNAKE_SEGMENTS = 2;
-    private final static double SPEED_X = 2, SPEED_Y = -2;
-    private static final int TRANSLATION_DURATION = 5000;
+    private final static double GAME_SPEED = 5;
     private double gameBoardHeight;
-    private double gameboardWidth;
-    private AnimationTimer animationTimer;
+    private double gameBoardWidth;
+    private Direction direction;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -32,9 +32,10 @@ public class Controller implements Initializable {
     }
 
     private void initializeEnvironment() {
+        direction = Direction.RIGHT;
         gameBoardHeight = gameBoard.getPrefHeight();
-        gameboardWidth = gameBoard.getPrefWidth();
-        System.out.println(gameboardWidth + " " + gameBoardHeight);
+        gameBoardWidth = gameBoard.getPrefWidth();
+        System.out.println(gameBoardWidth + " " + gameBoardHeight);
     }
 
     private void initializeSnake() {
@@ -45,6 +46,9 @@ public class Controller implements Initializable {
 
     private void drawSnake() {
         gameBoard.getChildren().add(head);
+    }
+
+    private void drawSnakeBody() {
         ArrayList<Circle> snakeBody = snake.getBody();
         for (Circle snakeSegment : snakeBody) {
             System.out.println("X : " + snakeSegment.getCenterX() + " Y = " + snakeSegment.getCenterY());
@@ -53,7 +57,7 @@ public class Controller implements Initializable {
     }
 
     private void initializeTimer() {
-        animationTimer = new AnimationTimer() {
+       AnimationTimer animationTimer = new AnimationTimer() {
             @Override
             public void handle(long now) {
                 updateGame();
@@ -63,54 +67,56 @@ public class Controller implements Initializable {
     }
 
     private void updateGame() {
-        double xPos = head.getCenterX();
-        double yPos = head.getCenterY();
-        PositionCoordinates headPosition = moveHead(xPos,yPos);
-
-        head.setCenterX(headPosition.getPosX() + SPEED_X);
-        head.setCenterY(headPosition.getPosY() + SPEED_Y);
+        moveHead();
+        handleUserInput();
     }
 
-    private PositionCoordinates moveHead(double xPos, double yPos) {
-        if (xPos > gameboardWidth - head.getRadius()) {
-            xPos = head.getRadius();
+    private void moveHead() {
+        if (head.getCenterX() > gameBoardWidth - head.getRadius()) {
+            head.setCenterX(head.getRadius());
         }
-        if (xPos < head.getRadius()) {
-            xPos = gameboardWidth - head.getRadius();
+        if (head.getCenterX() < head.getRadius()) {
+            head.setCenterX(gameBoardWidth - head.getRadius());
         }
-        if (yPos > gameBoardHeight - head.getRadius()) {
-            yPos = head.getRadius();
+        if (head.getCenterY() > gameBoardHeight - head.getRadius()) {
+            head.setCenterY(head.getRadius());
         }
-        if (yPos < head.getRadius()) {
-            yPos = gameBoardHeight - head.getRadius();
+        if (head.getCenterY() < head.getRadius()) {
+            head.setCenterY(gameBoardHeight - head.getRadius());
         }
-        return new PositionCoordinates(xPos,yPos);
     }
 
+    private void handleUserInput() {
+        head.setFocusTraversable(true);
+        head.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.UP) {
+                direction = Direction.UP;
+            }
+            if (event.getCode() == KeyCode.DOWN) {
+                direction = Direction.DOWN;
+            }
+            if (event.getCode() == KeyCode.LEFT) {
+                direction = Direction.LEFT;
+            }
+            if (event.getCode() == KeyCode.RIGHT) {
+                direction = Direction.RIGHT;
+            }
+        });
 
-//
-//    private void handleKeyPressed(TranslateTransition snakeTransition) {
-//        Circle head = snake.getHead();
-//        head.setFocusTraversable(true);
-//        head.setOnKeyPressed(event -> {
-////            System.out.println("gameBoard Dimensions: " + gameBoard.getLayoutBounds().getWidth() + " x " + gameBoard.getLayoutBounds().getHeight());
-//            if (event.getCode() == KeyCode.DOWN) {
-//                snakeTransition.setToY(gameBoardHeight);
-//                System.out.println("Down Pressed : newY = " + head.getCenterY());
-//            } else if (event.getCode() == KeyCode.UP) {
-//                snakeTransition.setToY(-gameBoardHeight);
-//                System.out.println("Up Pressed");
-//            } else if (event.getCode() == KeyCode.LEFT) {
-//                snakeTransition.setToX(-gameboardWidth);
-//                System.out.println("Left Pressed");
-//            } else if (event.getCode() == KeyCode.RIGHT) {
-//                snakeTransition.setToX(gameboardWidth);
-//                System.out.println("Right Pressed");
-//            }
-//            snakeTransition.play();
-//            System.out.println("head Position: (" + head.getCenterX() + "," + head.getCenterY() + ")");
-//        });
-//    }
-
+        switch (direction) {
+            case UP:
+                head.setCenterY(head.getCenterY() - GAME_SPEED);
+                break;
+            case DOWN:
+                head.setCenterY(head.getCenterY() + GAME_SPEED);
+                break;
+            case LEFT:
+                head.setCenterX(head.getCenterX() - GAME_SPEED);
+                break;
+            case RIGHT:
+                head.setCenterX(head.getCenterX() + GAME_SPEED);
+                break;
+        }
+    }
 
 }
