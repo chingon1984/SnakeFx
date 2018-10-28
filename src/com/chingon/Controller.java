@@ -9,6 +9,7 @@ import javafx.scene.shape.Circle;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.ResourceBundle;
 
 public class Controller implements Initializable {
@@ -20,10 +21,10 @@ public class Controller implements Initializable {
     private final static int SNAKE_SEGMENTS = 2;
     private double gameBoardHeight;
     private double gameBoardWidth;
-    private Direction direction, lastDirection;
+    private ArrayList<Segment> snakeBody;
 
 
-    Segment testCircle;
+    Segment testCircle1, testCircle2, testCircle3;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -43,17 +44,26 @@ public class Controller implements Initializable {
 
     private void initializeSnake() {
         snake = new Snake(SNAKE_SEGMENTS);
+        snakeBody = new ArrayList<>();
         head = snake.getHead();
+
+
+        testCircle1 = new Segment(10, 100);
+        testCircle2 = new Segment(40, 100);
+        testCircle3 = new Segment(70, 100);
+        Segment[] container = {head, testCircle1, testCircle2, testCircle3};
+        snakeBody = new ArrayList<>(Arrays.asList(container));
         drawSnake();
     }
 
     private void drawSnake() {
-        /*Test circle*/
-        testCircle = new Segment(70, 100);
-        gameBoard.getChildren().add(testCircle);
-        /*END*/
-
+        /*Error because of IllegalArgument...*/
         gameBoard.getChildren().add(head);
+//        for (Segment segment : snakeBody) {
+//            Circle test = ((Circle) segment);
+//            gameBoard.getChildren().add(test);
+//        }
+
     }
 
     private void drawSnakeBody() {
@@ -98,33 +108,26 @@ public class Controller implements Initializable {
         head.setFocusTraversable(true);
         head.setOnKeyPressed(event -> {
             head.setLastDirectionToDirection();
-            if (event.getCode() == KeyCode.UP) {
-//                direction = Direction.UP;
+
+            if (event.getCode() == KeyCode.UP)
                 head.setDirection(Direction.UP);
-            }
-            if (event.getCode() == KeyCode.DOWN) {
-//                direction = Direction.DOWN;
+            if (event.getCode() == KeyCode.DOWN)
                 head.setDirection(Direction.DOWN);
-            }
-            if (event.getCode() == KeyCode.LEFT) {
-//                direction = Direction.LEFT;
+            if (event.getCode() == KeyCode.LEFT)
                 head.setDirection(Direction.LEFT);
-            }
-            if (event.getCode() == KeyCode.RIGHT) {
-//                direction = Direction.RIGHT;
+            if (event.getCode() == KeyCode.RIGHT)
                 head.setDirection(Direction.RIGHT);
-            }
         });
     }
 
     private void validateInput() {
-        if(head.getDirection() == Direction.UP && head.getLastDirection() == Direction.DOWN)
+        if (head.getDirection() == Direction.UP && head.getLastDirection() == Direction.DOWN)
             head.setDirection(Direction.DOWN);
-        if(head.getDirection() == Direction.DOWN && head.getLastDirection() == Direction.UP)
+        if (head.getDirection() == Direction.DOWN && head.getLastDirection() == Direction.UP)
             head.setDirection(Direction.UP);
-        if(head.getDirection() == Direction.LEFT && head.getLastDirection() == Direction.RIGHT)
+        if (head.getDirection() == Direction.LEFT && head.getLastDirection() == Direction.RIGHT)
             head.setDirection(Direction.RIGHT);
-        if(head.getDirection() == Direction.RIGHT && head.getLastDirection() == Direction.LEFT)
+        if (head.getDirection() == Direction.RIGHT && head.getLastDirection() == Direction.LEFT)
             head.setDirection(Direction.LEFT);
     }
 
@@ -135,43 +138,20 @@ public class Controller implements Initializable {
             switch (head.getDirection()) {
                 case UP:
                     head.setCenterY(Y_Head - SnakeSettings.GAME_SPEED);
-
-                    if (testCircle.getCenterX() < X_Head)
-                        testCircle.setCenterX(testCircle.getCenterX() + SnakeSettings.GAME_SPEED);
-                    else if (testCircle.getCenterX() > X_Head)
-                        testCircle.setCenterX(testCircle.getCenterX() - SnakeSettings.GAME_SPEED);
-                    else
-                        testCircle.setCenterY(testCircle.getCenterY() - SnakeSettings.GAME_SPEED);
-
                     break;
                 case DOWN:
                     head.setCenterY(Y_Head + SnakeSettings.GAME_SPEED);
-                    if (testCircle.getCenterX() < X_Head)
-                        testCircle.setCenterX(testCircle.getCenterX() + SnakeSettings.GAME_SPEED);
-                    else if (testCircle.getCenterX() > X_Head)
-                        testCircle.setCenterX(testCircle.getCenterX() - SnakeSettings.GAME_SPEED);
-                    else
-                        testCircle.setCenterY(testCircle.getCenterY() + SnakeSettings.GAME_SPEED);
                     break;
                 case LEFT:
                     head.setCenterX(X_Head - SnakeSettings.GAME_SPEED);
-                    if (testCircle.getCenterY() < Y_Head)
-                        testCircle.setCenterY(testCircle.getCenterY() + SnakeSettings.GAME_SPEED);
-                    else if (testCircle.getCenterY() > Y_Head)
-                        testCircle.setCenterY(testCircle.getCenterY() - SnakeSettings.GAME_SPEED);
-                    else
-                        testCircle.setCenterX(testCircle.getCenterX() - SnakeSettings.GAME_SPEED);
                     break;
                 case RIGHT:
                     head.setCenterX(X_Head + SnakeSettings.GAME_SPEED);
-                    if (testCircle.getCenterY() < Y_Head)
-                        testCircle.setCenterY(testCircle.getCenterY() + SnakeSettings.GAME_SPEED);
-                    else if (testCircle.getCenterY() > Y_Head)
-                        testCircle.setCenterY(testCircle.getCenterY() - SnakeSettings.GAME_SPEED);
-                    else
-                        testCircle.setCenterX(testCircle.getCenterX() + SnakeSettings.GAME_SPEED);
                     break;
             }
+
+        for (int i = 0; i < snakeBody.size() - 1; i++)
+            linkSegments(snakeBody.get(i), snakeBody.get(i + 1));
     }
 
     private void linkSegments(Segment segment1, Segment segment2) {
@@ -181,12 +161,43 @@ public class Controller implements Initializable {
         double YPosSegment2 = segment2.getCenterY();
 
 
+        switch (head.getDirection()) {
+            case UP:
+                if (XPosSegment2 < XPosSegment1)
+                    segment2.setCenterX(XPosSegment2 + SnakeSettings.GAME_SPEED);
+                else if (XPosSegment2 > XPosSegment1)
+                    segment2.setCenterX(XPosSegment2 - SnakeSettings.GAME_SPEED);
+                else
+                    segment2.setCenterY(YPosSegment2 - SnakeSettings.GAME_SPEED);
+
+                break;
+            case DOWN:
+                if (XPosSegment2 < XPosSegment1)
+                    segment2.setCenterX(XPosSegment2 + SnakeSettings.GAME_SPEED);
+                else if (XPosSegment2 > XPosSegment1)
+                    segment2.setCenterX(XPosSegment2 - SnakeSettings.GAME_SPEED);
+                else
+                    segment2.setCenterY(YPosSegment2 + SnakeSettings.GAME_SPEED);
+                break;
+            case LEFT:
+                if (YPosSegment2 < YPosSegment1)
+                    segment2.setCenterY(YPosSegment2 + SnakeSettings.GAME_SPEED);
+                else if (YPosSegment2 > YPosSegment1)
+                    segment2.setCenterY(YPosSegment2 - SnakeSettings.GAME_SPEED);
+                else
+                    segment2.setCenterX(XPosSegment2 - SnakeSettings.GAME_SPEED);
+                break;
+            case RIGHT:
+                if (YPosSegment2 < YPosSegment1)
+                    segment2.setCenterY(YPosSegment2 + SnakeSettings.GAME_SPEED);
+                else if (YPosSegment2 > YPosSegment1)
+                    segment2.setCenterY(YPosSegment2 - SnakeSettings.GAME_SPEED);
+                else
+                    segment2.setCenterX(XPosSegment2 + SnakeSettings.GAME_SPEED);
+                break;
+        }
 
     }
-
-
-
-
 
 
 }
