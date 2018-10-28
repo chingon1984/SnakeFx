@@ -8,13 +8,13 @@ import java.util.ArrayList;
 public class Snake {
     private ArrayList<Circle> snakeBody;
     private final double HEAD_RADIUS = 10.0, SEGMENT_RADIUS = 8.0;
-    private final Circle head;
+    private final Segment head;
     private PositionCoordinates headPosition;
 
 
     Snake(int segments) {
         snakeBody = new ArrayList<>();
-        head = new Circle(100, 100, HEAD_RADIUS, Color.RED);
+        head = new Segment(100, 100, Color.RED);
         headPosition = new PositionCoordinates(head.getCenterX(),head.getCenterY());
         for(int i=1; i<=segments; i++)
             addSegmentToBody();
@@ -32,7 +32,7 @@ public class Snake {
 //        return snakeBody.get(snakeBody.size()-1);
 //    }
 
-    Circle getHead() {
+    Segment getHead() {
         return head;
     }
 
