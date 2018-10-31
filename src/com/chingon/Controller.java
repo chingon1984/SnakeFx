@@ -9,7 +9,6 @@ import javafx.scene.shape.Circle;
 
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.ResourceBundle;
 
 public class Controller implements Initializable {
@@ -23,8 +22,6 @@ public class Controller implements Initializable {
     private double gameBoardWidth;
     private ArrayList<Segment> snakeBody;
 
-
-    Segment testCircle1, testCircle2, testCircle3;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -48,21 +45,30 @@ public class Controller implements Initializable {
         head = snake.getHead();
 
 
-        testCircle1 = new Segment(10, 100);
-        testCircle2 = new Segment(40, 100);
-        testCircle3 = new Segment(70, 100);
-        Segment[] container = {head, testCircle1, testCircle2, testCircle3};
-        snakeBody = new ArrayList<>(Arrays.asList(container));
+
         drawSnake();
     }
 
     private void drawSnake() {
-        /*Error because of IllegalArgument...*/
-        gameBoard.getChildren().add(head);
-//        for (Segment segment : snakeBody) {
-//            Circle test = ((Circle) segment);
-//            gameBoard.getChildren().add(test);
-//        }
+        Segment testCircle1 = new Segment(70, 100);
+        Segment testCircle2 = new Segment(40, 100);
+        Segment testCircle3 = new Segment(10, 100);
+        Segment testCircle4 = new Segment(580, 100);
+        Segment testCircle5 = new Segment(550, 100);
+
+
+        snakeBody = new ArrayList<>();
+        snakeBody.add(head);
+        snakeBody.add(testCircle1);
+        snakeBody.add(testCircle2);
+        snakeBody.add(testCircle3);
+        snakeBody.add(testCircle4);
+        snakeBody.add(testCircle5);
+
+
+        snakeBody.forEach(segment -> {
+            gameBoard.getChildren().add(segment);
+        });
 
     }
 
@@ -85,22 +91,25 @@ public class Controller implements Initializable {
     }
 
     private void updateGame() {
-        checkBorders();
+
         getUserInput();
         validateInput();
         move();
+        checkBorders();
     }
 
     private void checkBorders() {
-        if (head.getCenterX() > gameBoardWidth - head.getRadius()) {
-            head.setCenterX(head.getRadius());
-        } else if (head.getCenterX() < head.getRadius()) {
-            head.setCenterX(gameBoardWidth - head.getRadius());
-        } else if (head.getCenterY() > gameBoardHeight - head.getRadius()) {
-            head.setCenterY(head.getRadius());
-        } else if (head.getCenterY() < head.getRadius()) {
-            head.setCenterY(gameBoardHeight - head.getRadius());
+        snakeBody.forEach(segment -> {
+        if (segment.getCenterX() > gameBoardWidth) {
+            segment.setCenterX(0);
+        } else if (segment.getCenterX() < 0 ) {
+            segment.setCenterX(gameBoardWidth);
+        } else if (segment.getCenterY() > gameBoardHeight) {
+            segment.setCenterY(0);
+        } else if (segment.getCenterY() < 0) {
+            segment.setCenterY(gameBoardHeight);
         }
+        });
     }
 
 
@@ -150,7 +159,7 @@ public class Controller implements Initializable {
                     break;
             }
 
-        for (int i = 0; i < snakeBody.size() - 1; i++)
+        for (int i = 0; i < snakeBody.size() -1; i++)
             linkSegments(snakeBody.get(i), snakeBody.get(i + 1));
     }
 
