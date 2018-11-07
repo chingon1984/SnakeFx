@@ -6,9 +6,7 @@ import javafx.scene.shape.Circle;
 
 public class Segment extends Circle {
 
-    private PVector location;
-    private PVector velocity;
-    private Direction direction, lastDirection;
+    private Direction currentDirection, lastDirection;
 
     public Segment(double centerX, double centerY) {
          this(centerX,centerY,Color.BLACK);
@@ -16,35 +14,20 @@ public class Segment extends Circle {
 
     public Segment(double centerX, double centerY, Paint fill) {
         super(centerX,centerY,SnakeSettings.RADIUS,fill);
-        location = new PVector(getCenterX(), getCenterY());
-        velocity = new PVector(0,0);
-        direction = Direction.NONE;
+        currentDirection = Direction.NONE;
         lastDirection = Direction.NONE;
     }
 
-    public PVector getLocation() {
-        return new PVector(getCenterX(),getCenterY());
+    public Direction getCurrentDirection() {
+        return currentDirection;
     }
 
-    public PVector getVelocity() {
-        return velocity;
-    }
-
-    public void follow(Segment segment) {
-        velocity = PVector.subtractVector(segment.getLocation(),location);
-        location.addVector(velocity);
-    }
-
-    public Direction getDirection() {
-        return direction;
-    }
-
-    public void setDirection(Direction direction) {
-        this.direction = direction;
+    public void setCurrentDirection(Direction currentDirection) {
+        this.currentDirection = currentDirection;
     }
 
     public void setLastDirectionToDirection() {
-        lastDirection = direction;
+        lastDirection = currentDirection;
     }
 
     public Direction getLastDirection() {
