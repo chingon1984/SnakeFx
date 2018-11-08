@@ -12,7 +12,7 @@ public class Snake {
 
     private Snake(int segments) {
         snakeBody = new ArrayList<>();
-        snakeBody.add(new Segment(100, 100, Color.RED));
+        snakeBody.add(new Segment(400, 100, Color.RED));
         setInitialSegments(segments);
 //        headPosition = new PositionCoordinates(head.getCenterX(),head.getCenterY());
 //        for(int i=1; i<=segments; i++)
@@ -26,7 +26,7 @@ public class Snake {
 
     public static void setInitialSegments(int segments) {
         for (int i = 1; i <= segments; i++) {
-            snakeBody.add(new Segment(100-30*i,100));
+            snakeBody.add(new Segment(400-50*i,100));
         }
 //            addSegmentToBody();
     }

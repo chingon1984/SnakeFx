@@ -5,7 +5,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
-import javafx.scene.shape.Circle;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -42,34 +41,9 @@ public class Controller implements Initializable {
     }
 
     private void drawSnake() {
-//        Segment testCircle1 = new Segment(70, 100);
-//        Segment testCircle2 = new Segment(40, 100);
-//        Segment testCircle3 = new Segment(10, 100);
-//        Segment testCircle4 = new Segment(580, 100);
-//        Segment testCircle5 = new Segment(550, 100);
-//
-//
-//        snakeBody = new ArrayList<>();
-//        snakeBody.add(head);
-//        snakeBody.add(testCircle1);
-//        snakeBody.add(testCircle2);
-//        snakeBody.add(testCircle3);
-//        snakeBody.add(testCircle4);
-//        snakeBody.add(testCircle5);
-
-
         snakeBody.forEach(segment -> {
             gameBoard.getChildren().add(segment);
         });
-
-    }
-
-    private void drawSnakeBody() {
-        ArrayList<Segment> snakeBody = snake.getBody();
-        for (Circle snakeSegment : snakeBody) {
-            System.out.println("X : " + snakeSegment.getCenterX() + " Y = " + snakeSegment.getCenterY());
-            gameBoard.getChildren().add(snakeSegment);
-        }
     }
 
     private void initializeTimer() {
@@ -92,7 +66,7 @@ public class Controller implements Initializable {
     private void getUserInput() {
         head.setFocusTraversable(true);
         head.setOnKeyPressed(event -> {
-            head.setLastDirectionToDirection();
+            head.setLastDirectionToCurrentDirection();
 
             if (event.getCode() == KeyCode.UP)
                 head.setCurrentDirection(Direction.UP);
@@ -153,39 +127,48 @@ public class Controller implements Initializable {
         double YPosSegment2 = segment2.getCenterY();
 
 
-        switch (head.getCurrentDirection()) {
+        //TODO: Glitch when changing the direction quickly. Overtake...
+
+        switch (segment1.getCurrentDirection()) {
             case UP:
                 if (XPosSegment2 < XPosSegment1)
                     segment2.setCenterX(XPosSegment2 + SnakeSettings.GAME_SPEED);
                 else if (XPosSegment2 > XPosSegment1)
                     segment2.setCenterX(XPosSegment2 - SnakeSettings.GAME_SPEED);
-                else
+                else {
                     segment2.setCenterY(YPosSegment2 - SnakeSettings.GAME_SPEED);
-
+                    segment2.setCurrentDirection(segment1.getCurrentDirection());
+                }
                 break;
             case DOWN:
                 if (XPosSegment2 < XPosSegment1)
                     segment2.setCenterX(XPosSegment2 + SnakeSettings.GAME_SPEED);
                 else if (XPosSegment2 > XPosSegment1)
                     segment2.setCenterX(XPosSegment2 - SnakeSettings.GAME_SPEED);
-                else
+                else {
                     segment2.setCenterY(YPosSegment2 + SnakeSettings.GAME_SPEED);
+                    segment2.setCurrentDirection(segment1.getCurrentDirection());
+                }
                 break;
             case LEFT:
                 if (YPosSegment2 < YPosSegment1)
                     segment2.setCenterY(YPosSegment2 + SnakeSettings.GAME_SPEED);
                 else if (YPosSegment2 > YPosSegment1)
                     segment2.setCenterY(YPosSegment2 - SnakeSettings.GAME_SPEED);
-                else
+                else {
                     segment2.setCenterX(XPosSegment2 - SnakeSettings.GAME_SPEED);
+                    segment2.setCurrentDirection(segment1.getCurrentDirection());
+                }
                 break;
             case RIGHT:
                 if (YPosSegment2 < YPosSegment1)
                     segment2.setCenterY(YPosSegment2 + SnakeSettings.GAME_SPEED);
                 else if (YPosSegment2 > YPosSegment1)
                     segment2.setCenterY(YPosSegment2 - SnakeSettings.GAME_SPEED);
-                else
+                else {
                     segment2.setCenterX(XPosSegment2 + SnakeSettings.GAME_SPEED);
+                    segment2.setCurrentDirection(segment1.getCurrentDirection());
+                }
                 break;
         }
     }

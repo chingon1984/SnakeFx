@@ -26,7 +26,7 @@ public class Segment extends Circle {
         this.currentDirection = currentDirection;
     }
 
-    public void setLastDirectionToDirection() {
+    public void setLastDirectionToCurrentDirection() {
         lastDirection = currentDirection;
     }
 
