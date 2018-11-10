@@ -14,7 +14,6 @@ public class Controller implements Initializable {
     @FXML
     Pane gameBoard;
 
-    private Snake snake;
     private Segment head;
     private double gameBoardHeight;
     private double gameBoardWidth;
@@ -58,7 +57,7 @@ public class Controller implements Initializable {
 
     private void updateGame() {
         getUserInput();
-        noOppositeDirection();
+        validateDirection();
         move();
         checkBorders();
     }
@@ -67,7 +66,6 @@ public class Controller implements Initializable {
         head.setFocusTraversable(true);
         head.setOnKeyPressed(event -> {
             head.setLastDirectionToCurrentDirection();
-            if(validateDistanceBetweenDirectionChanges()) {
                 if (event.getCode() == KeyCode.UP)
                     head.setCurrentDirection(Direction.UP);
                 if (event.getCode() == KeyCode.DOWN)
@@ -76,24 +74,19 @@ public class Controller implements Initializable {
                     head.setCurrentDirection(Direction.LEFT);
                 if (event.getCode() == KeyCode.RIGHT)
                     head.setCurrentDirection(Direction.RIGHT);
-            }
+//            }
         });
     }
 
-    private boolean validateDistanceBetweenDirectionChanges() {
-        return ((Math.abs(head.getPositionOfLastDirectionChange().getPosX() - head.getCenterX())) >= 0.5 * SnakeSettings.RADIUS) ||
-                ((Math.abs(head.getPositionOfLastDirectionChange().getPosY() - head.getCenterY())) >= 0.5 * SnakeSettings.RADIUS);
-    }
-
-    private void noOppositeDirection() {
+    private void validateDirection() {
         if ((head.getCurrentDirection() == Direction.UP && head.getLastDirection() == Direction.DOWN) ||
                 (head.getCurrentDirection() == Direction.DOWN && head.getLastDirection() == Direction.UP) ||
                 (head.getCurrentDirection() == Direction.LEFT && head.getLastDirection() == Direction.RIGHT) ||
                 (head.getCurrentDirection() == Direction.RIGHT && head.getLastDirection() == Direction.LEFT)) {
             head.setCurrentDirection(head.getLastDirection());
-        }
-        if(head.getCurrentDirection() != head.getLastDirection())
+        } else {
             head.setPositionOfLastDirectionChange(head.getCenterX(),head.getCenterY());
+        }
     }
 
     private void move() {
@@ -192,4 +185,7 @@ public class Controller implements Initializable {
             }
         });
     }
+
+
+
 }
