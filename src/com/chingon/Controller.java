@@ -58,7 +58,7 @@ public class Controller implements Initializable {
 
     private void updateGame() {
         getUserInput();
-        validateInput();
+        noOppositeDirection();
         move();
         checkBorders();
     }
@@ -67,27 +67,33 @@ public class Controller implements Initializable {
         head.setFocusTraversable(true);
         head.setOnKeyPressed(event -> {
             head.setLastDirectionToCurrentDirection();
-
-            if (event.getCode() == KeyCode.UP)
-                head.setCurrentDirection(Direction.UP);
-            if (event.getCode() == KeyCode.DOWN)
-                head.setCurrentDirection(Direction.DOWN);
-            if (event.getCode() == KeyCode.LEFT)
-                head.setCurrentDirection(Direction.LEFT);
-            if (event.getCode() == KeyCode.RIGHT)
-                head.setCurrentDirection(Direction.RIGHT);
+            if(validateDistanceBetweenDirectionChanges()) {
+                if (event.getCode() == KeyCode.UP)
+                    head.setCurrentDirection(Direction.UP);
+                if (event.getCode() == KeyCode.DOWN)
+                    head.setCurrentDirection(Direction.DOWN);
+                if (event.getCode() == KeyCode.LEFT)
+                    head.setCurrentDirection(Direction.LEFT);
+                if (event.getCode() == KeyCode.RIGHT)
+                    head.setCurrentDirection(Direction.RIGHT);
+            }
         });
     }
 
-    private void validateInput() {
-        if (head.getCurrentDirection() == Direction.UP && head.getLastDirection() == Direction.DOWN)
-            head.setCurrentDirection(Direction.DOWN);
-        if (head.getCurrentDirection() == Direction.DOWN && head.getLastDirection() == Direction.UP)
-            head.setCurrentDirection(Direction.UP);
-        if (head.getCurrentDirection() == Direction.LEFT && head.getLastDirection() == Direction.RIGHT)
-            head.setCurrentDirection(Direction.RIGHT);
-        if (head.getCurrentDirection() == Direction.RIGHT && head.getLastDirection() == Direction.LEFT)
-            head.setCurrentDirection(Direction.LEFT);
+    private boolean validateDistanceBetweenDirectionChanges() {
+        return ((Math.abs(head.getPositionOfLastDirectionChange().getPosX() - head.getCenterX())) >= 0.5 * SnakeSettings.RADIUS) ||
+                ((Math.abs(head.getPositionOfLastDirectionChange().getPosY() - head.getCenterY())) >= 0.5 * SnakeSettings.RADIUS);
+    }
+
+    private void noOppositeDirection() {
+        if ((head.getCurrentDirection() == Direction.UP && head.getLastDirection() == Direction.DOWN) ||
+                (head.getCurrentDirection() == Direction.DOWN && head.getLastDirection() == Direction.UP) ||
+                (head.getCurrentDirection() == Direction.LEFT && head.getLastDirection() == Direction.RIGHT) ||
+                (head.getCurrentDirection() == Direction.RIGHT && head.getLastDirection() == Direction.LEFT)) {
+            head.setCurrentDirection(head.getLastDirection());
+        }
+        if(head.getCurrentDirection() != head.getLastDirection())
+            head.setPositionOfLastDirectionChange(head.getCenterX(),head.getCenterY());
     }
 
     private void move() {
@@ -116,7 +122,7 @@ public class Controller implements Initializable {
     }
 
     private void moveBody() {
-        for (int i = 0; i < snakeBody.size() -1; i++)
+        for (int i = 0; i < snakeBody.size() - 1; i++)
             linkSegments(snakeBody.get(i), snakeBody.get(i + 1));
     }
 
@@ -177,7 +183,7 @@ public class Controller implements Initializable {
         snakeBody.forEach(segment -> {
             if (segment.getCenterX() > gameBoardWidth) {
                 segment.setCenterX(0);
-            } else if (segment.getCenterX() < 0 ) {
+            } else if (segment.getCenterX() < 0) {
                 segment.setCenterX(gameBoardWidth);
             } else if (segment.getCenterY() > gameBoardHeight) {
                 segment.setCenterY(0);
@@ -186,6 +192,4 @@ public class Controller implements Initializable {
             }
         });
     }
-
-
 }

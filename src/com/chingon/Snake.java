@@ -26,7 +26,7 @@ public class Snake {
 
     public static void setInitialSegments(int segments) {
         for (int i = 1; i <= segments; i++) {
-            snakeBody.add(new Segment(400-50*i,100));
+            snakeBody.add(new Segment(400-30*i,100));
         }
 //            addSegmentToBody();
     }

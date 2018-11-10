@@ -20,4 +20,12 @@ public class PositionCoordinates {
         this.posX += posX;
         this.posY += posY;
     }
+
+    public void setPosX(double posX) {
+        this.posX = posX;
+    }
+
+    public void setPosY(double posY) {
+        this.posY = posY;
+    }
 }
