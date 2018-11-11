@@ -28,4 +28,9 @@ public class PositionCoordinates {
     public void setPosY(double posY) {
         this.posY = posY;
     }
+
+    @Override
+    public String toString() {
+        return "PosX: " + this.posX + " PosY: " + this.posY;
+    }
 }

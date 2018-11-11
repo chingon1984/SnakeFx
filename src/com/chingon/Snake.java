@@ -8,9 +8,11 @@ public class Snake {
     private static ArrayList<Segment> snakeBody;
     private PositionCoordinates headPosition;
     private static Snake instance = null;
+    private static ArrayList<PositionCoordinates> coordinates;
 
 
     private Snake(int segments) {
+        coordinates = new ArrayList<>();
         snakeBody = new ArrayList<>();
         snakeBody.add(new Segment(400, 100, Color.RED));
         setInitialSegments(segments);
@@ -19,12 +21,12 @@ public class Snake {
 //            addSegmentToBody();
     }
 
-    public static void createSnake(int segments) {
+    static void createSnake(int segments) {
         if (instance == null)
             instance = new Snake(segments);
     }
 
-    public static void setInitialSegments(int segments) {
+    private static void setInitialSegments(int segments) {
         for (int i = 1; i <= segments; i++) {
             snakeBody.add(new Segment(400-30*i,100));
         }
@@ -39,9 +41,12 @@ public class Snake {
         return snakeBody;
     }
 
-
-    Segment getHead() {
-        return snakeBody.get(0);
+    static void setDirectionAndLogCoordinates(Direction direction) {
+        Segment head = snakeBody.get(0);
+        PositionCoordinates positionCoordinates = new PositionCoordinates(head.getCenterX(), head.getCenterY());
+        head.setCurrentDirection(direction);
+        coordinates.add(positionCoordinates);
+        System.out.println(positionCoordinates);
     }
 
 

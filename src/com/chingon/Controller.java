@@ -57,7 +57,6 @@ public class Controller implements Initializable {
 
     private void updateGame() {
         getUserInput();
-        validateDirection();
         move();
         checkBorders();
     }
@@ -66,33 +65,22 @@ public class Controller implements Initializable {
         head.setFocusTraversable(true);
         head.setOnKeyPressed(event -> {
             head.setLastDirectionToCurrentDirection();
-                if (event.getCode() == KeyCode.UP)
-                    head.setCurrentDirection(Direction.UP);
-                if (event.getCode() == KeyCode.DOWN)
-                    head.setCurrentDirection(Direction.DOWN);
-                if (event.getCode() == KeyCode.LEFT)
-                    head.setCurrentDirection(Direction.LEFT);
-                if (event.getCode() == KeyCode.RIGHT)
-                    head.setCurrentDirection(Direction.RIGHT);
-//            }
+            if ((event.getCode() == KeyCode.UP) && (head.getLastDirection() != Direction.DOWN))
+                Snake.setDirectionAndLogCoordinates(Direction.UP);
+            else if ((event.getCode() == KeyCode.DOWN) && (head.getLastDirection() != Direction.UP))
+                Snake.setDirectionAndLogCoordinates(Direction.DOWN);
+            else if ((event.getCode() == KeyCode.LEFT) && (head.getLastDirection() != Direction.RIGHT))
+                Snake.setDirectionAndLogCoordinates(Direction.LEFT);
+            else if ((event.getCode() == KeyCode.RIGHT) && (head.getLastDirection() != Direction.LEFT))
+                Snake.setDirectionAndLogCoordinates(Direction.RIGHT);
         });
-    }
-
-    private void validateDirection() {
-        if ((head.getCurrentDirection() == Direction.UP && head.getLastDirection() == Direction.DOWN) ||
-                (head.getCurrentDirection() == Direction.DOWN && head.getLastDirection() == Direction.UP) ||
-                (head.getCurrentDirection() == Direction.LEFT && head.getLastDirection() == Direction.RIGHT) ||
-                (head.getCurrentDirection() == Direction.RIGHT && head.getLastDirection() == Direction.LEFT)) {
-            head.setCurrentDirection(head.getLastDirection());
-        } else {
-            head.setPositionOfLastDirectionChange(head.getCenterX(),head.getCenterY());
-        }
     }
 
     private void move() {
         moveHead();
         moveBody();
     }
+
 
     private void moveHead() {
         double X_Head = head.getCenterX();
@@ -125,8 +113,6 @@ public class Controller implements Initializable {
         double XPosSegment2 = segment2.getCenterX();
         double YPosSegment2 = segment2.getCenterY();
 
-
-        //TODO: Glitch when changing the direction quickly. Overtake...
 
         switch (segment1.getCurrentDirection()) {
             case UP:
@@ -185,7 +171,6 @@ public class Controller implements Initializable {
             }
         });
     }
-
 
 
 }
