@@ -7,7 +7,7 @@ import javafx.scene.shape.Circle;
 class Segment extends Circle {
 
     private Direction currentDirection, lastDirection;
-
+    private boolean positionMarked;
     private PositionCoordinates positionOfDirectionChange;
 
     Segment(double centerX, double centerY) {
@@ -18,7 +18,16 @@ class Segment extends Circle {
         super(centerX, centerY, SnakeSettings.RADIUS, fill);
         currentDirection = Direction.NONE;
         lastDirection = Direction.NONE;
+        positionMarked = false;
 //        positionOfDirectionChange = new PositionCoordinates(this.getCenterX(), this.getLayoutY());
+    }
+
+    public boolean isPositionMarked() {
+        return positionMarked;
+    }
+
+    public void setMarkPosition(boolean markPosition) {
+        this.positionMarked = markPosition;
     }
 
     Direction getCurrentDirection() {

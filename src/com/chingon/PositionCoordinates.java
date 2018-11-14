@@ -33,4 +33,8 @@ public class PositionCoordinates {
     public String toString() {
         return "PosX: " + this.posX + " PosY: " + this.posY;
     }
+
+    public static PositionCoordinates getPositionCoordinates(double posX, double posY) {
+        return new PositionCoordinates(posX, posY);
+    }
 }

@@ -106,27 +106,66 @@ public class Controller implements Initializable {
     }
 
 
+    /*Checke ob currentDirection != currentDirection vom vorgänger
+     *wenn ja -> prüfe ob position erreicht
+     *      wenn nein
+     *          weiter in Richtung
+     *      wenn ja
+     *          setzte currentDirection = currentDirection vom Vorgänger
+     *Wenn nein, tue nichts / wenn ja, setze Position und...
+     *Gehe in Richtung Currentdirection
+     * */
+
     private void moveBody() {
         for (int i = 1; i < snakeBody.size(); i++) {
             Segment currentSegment = snakeBody.get(i);
             PositionCoordinates currentSegmentsPosition = new PositionCoordinates(currentSegment.getCenterX(), currentSegment.getCenterY());
-            PositionCoordinates positionOfDirectionChange = snakeBody.get(i - i).getPositionOfDirectionChange();
+            Direction predecessorsCurrentDirection = snakeBody.get(i - 1).getCurrentDirection();
 
-            if (positionOfDirectionChange != null) {
-                if (currentSegmentsPosition.getPosX() == positionOfDirectionChange.getPosX() && currentSegmentsPosition.getPosY() == positionOfDirectionChange.getPosY()) {
-                    currentSegment.setCurrentDirection(snakeBody.get(i - 1).getCurrentDirection());
-                    snakeBody.get(i-1).setPositionOfDirectionChange(null);
-                } else if (currentSegmentsPosition.getPosX() < positionOfDirectionChange.getPosX()) {
-                    currentSegment.setCurrentDirection(Direction.RIGHT);
-                } else if (currentSegmentsPosition.getPosX() > positionOfDirectionChange.getPosX()) {
-                    currentSegment.setCurrentDirection(Direction.LEFT);
-                } else if (currentSegmentsPosition.getPosY() < positionOfDirectionChange.getPosY()) {
-                    currentSegment.setCurrentDirection(Direction.DOWN);
-                } else if (currentSegmentsPosition.getPosY() > positionOfDirectionChange.getPosY()) {
-                    currentSegment.setCurrentDirection(Direction.UP);
+
+            if (currentSegment.getCurrentDirection() != predecessorsCurrentDirection) {
+                if (!currentSegment.isPositionMarked()) {
+                    switch (currentSegment.getCurrentDirection()) {
+                        case RIGHT:
+                            currentSegment.getPositionOfDirectionChange().addToPos(2 * SnakeSettings.RADIUS, 0);
+                            break;
+                        case LEFT:
+                            currentSegment.getPositionOfDirectionChange().addToPos(-2 * SnakeSettings.RADIUS, 0);
+                            break;
+                        case UP:
+                            currentSegment.getPositionOfDirectionChange().addToPos(0, -2 * SnakeSettings.RADIUS);
+                            break;
+                        case DOWN:
+                            currentSegment.getPositionOfDirectionChange().addToPos(0, 2 * SnakeSettings.RADIUS);
+                            break;
+                    }
+                    currentSegment.setMarkPosition(true);
+                }
+                if (currentSegmentsPosition == currentSegment.getPositionOfDirectionChange()) {
+                    currentSegment.setCurrentDirection(predecessorsCurrentDirection);
+                    currentSegment.setMarkPosition(false);
                 }
             }
             moveInDirection(currentSegment);
+
+
+//            if (positionOfDirectionChange != null) {
+//                if(!currentSegment.isPositionMarked()) {
+//                    if (currentSegmentsPosition.getPosX() == positionOfDirectionChange.getPosX() && currentSegmentsPosition.getPosY() == positionOfDirectionChange.getPosY()) {
+//                        currentSegment.setCurrentDirection(snakeBody.get(i - 1).getCurrentDirection());
+//                        currentSegment.setPositionMarked(true);
+//                    } else if (currentSegmentsPosition.getPosX() < positionOfDirectionChange.getPosX()) {
+//                        currentSegment.setCurrentDirection(Direction.RIGHT);
+//                    } else if (currentSegmentsPosition.getPosX() > positionOfDirectionChange.getPosX()) {
+//                        currentSegment.setCurrentDirection(Direction.LEFT);
+//                    } else if (currentSegmentsPosition.getPosY() < positionOfDirectionChange.getPosY()) {
+//                        currentSegment.setCurrentDirection(Direction.DOWN);
+//                    } else if (currentSegmentsPosition.getPosY() > positionOfDirectionChange.getPosY()) {
+//                        currentSegment.setCurrentDirection(Direction.UP);
+//                    }
+//                }
+//            }
+//            moveInDirection(currentSegment);
         }
     }
 
