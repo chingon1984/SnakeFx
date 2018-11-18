@@ -53,6 +53,14 @@ public class Snake {
         }
     }
 
+    public static PositionCoordinates getHeadCoordinatesFromBehind( int i) {
+        try {
+            return headMovements.get(headMovements.size()-(1+i)).getPositionCoordinates();
+        } catch (IndexOutOfBoundsException e) {
+            return null;
+        }
+    }
+
 
     private void addSegmentToBody() {
 //        PositionCoordinates positionOfNewSegment = getPositionOfNewSegment();

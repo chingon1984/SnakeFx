@@ -5,9 +5,8 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 
 class Segment extends Circle {
-    private Direction currentDirection, lastDirection;
+    private Direction currentDirection;
     private int positionCounter;
-
 
     Segment(double centerX, double centerY) {
         this(centerX, centerY, Color.BLACK);
@@ -16,7 +15,6 @@ class Segment extends Circle {
     Segment(double centerX, double centerY, Paint fill) {
         super(centerX, centerY, SnakeSettings.RADIUS, fill);
         currentDirection = Direction.RIGHT;
-        lastDirection = Direction.RIGHT;
         positionCounter = 0;
     }
 
@@ -30,23 +28,6 @@ class Segment extends Circle {
 
     void setCurrentDirection(Direction currentDirection) {
         this.currentDirection = currentDirection;
-    }
-
-    private void setLastDirection(Direction direction) {
-        lastDirection = direction;
-    }
-
-    Direction getLastDirection() {
-        return lastDirection;
-    }
-
-    void setDirectionAndPosition(Direction direction) {
-        if (lastDirection == Direction.NONE)
-            setLastDirection(direction);
-        else
-            setLastDirection(currentDirection);
-
-        setCurrentDirection(direction);
     }
 
     public void incrementPositionCounter() {
