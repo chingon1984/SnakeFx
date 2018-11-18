@@ -6,14 +6,15 @@ import java.util.ArrayList;
 
 public class Snake {
     private static ArrayList<Segment> snakeBody;
-    private PositionCoordinates headPosition;
-    private static Snake instance = null;
+    private static ArrayList<HeadMovement> headMovements;
 
+    private static Snake instance = null;
 
 
     private Snake(int segments) {
         snakeBody = new ArrayList<>();
-        snakeBody.add(new Segment(400, 100, Color.RED));
+        headMovements = new ArrayList<>();
+        snakeBody.add(new Head(300, 100, Color.RED));
         setInitialSegments(segments);
 //        headPosition = new PositionCoordinates(head.getCenterX(),head.getCenterY());
 //        for(int i=1; i<=segments; i++)
@@ -27,30 +28,32 @@ public class Snake {
 
     private static void setInitialSegments(int segments) {
         for (int i = 1; i <= segments; i++) {
-            snakeBody.add(new Segment(400-30*i,100));
+            snakeBody.add(new Segment(300 - 30 * i, 100));
         }
 //            addSegmentToBody();
-    }
-
-    public PositionCoordinates getHeadPosition() {
-        return headPosition;
     }
 
     static ArrayList<Segment> getBody() {
         return snakeBody;
     }
 
+    static void saveHeadCoordinates(double posX, double posY, Direction direction) {
+        PositionCoordinates position = new PositionCoordinates(posX, posY);
+        HeadMovement headMovement = new HeadMovement(position,direction);
+        headMovements.add(headMovement);
+        System.out.println("Position of Change: " + posX + " : " + posY + "   -   Following Direction = " + direction.toString());
+
+    }
+
+    public static HeadMovement getNextPosition(int i) {
+        try {
+            return headMovements.get(i);
+        } catch (IndexOutOfBoundsException e) {
+            return null;
+        }
+    }
 
 
-    //    Circle getNewSegment() {
-//        return snakeBody.get(snakeBody.size()-1);
-//    }
-
-
-//    void grow() {
-//        addSegmentToBody();
-//    }
-//
     private void addSegmentToBody() {
 //        PositionCoordinates positionOfNewSegment = getPositionOfNewSegment();
 //        Segment snakeElement = new Segment(positionOfNewSegment.getPosX(), positionOfNewSegment.getPosY());
@@ -58,35 +61,6 @@ public class Snake {
 
 //        snakeBody.add(snakeElement);
     }
-
-
-
-//// TODO    Need change depending on direction of last segment
-//    private PositionCoordinates getPositionOfNewSegment() {
-//        PositionCoordinates positionOfNewSegment = getPositionOfLastSegment();
-//        if (snakeBody.size() > 0)
-//            positionOfNewSegment.addToPos(0, 2 * SnakeSettings.RADIUS);
-//        else
-//            addSizeToHead(positionOfNewSegment);
-//        return positionOfNewSegment;
-//    }
-//
-//    private PositionCoordinates getPositionOfLastSegment() {
-//        double posX = 0;
-//        double posY = 0;
-//        if(snakeBody.size() > 0) {
-//            posX = snakeBody.get(snakeBody.size() - 1).getCenterX();
-//            posY = snakeBody.get(snakeBody.size() - 1).getCenterY();
-//        }else {
-//            posX = head.getCenterX();
-//            posY = head.getCenterY();
-//        }
-//        return new PositionCoordinates(posX, posY);
-//    }
-//
-//    private void addSizeToHead(PositionCoordinates coordinates) {
-//        coordinates.addToPos(0, HEAD_RADIUS + SEGMENT_RADIUS);
-//    }
 
 
 }

@@ -14,7 +14,7 @@ public class Controller implements Initializable {
     @FXML
     Pane gameBoard;
 
-    private Segment head;
+    private Head head;
     private double gameBoardHeight;
     private double gameBoardWidth;
     private ArrayList<Segment> snakeBody;
@@ -35,7 +35,7 @@ public class Controller implements Initializable {
     private void initializeSnake() {
         Snake.createSnake(SnakeSettings.SNAKE_SEGMENTS);
         snakeBody = Snake.getBody();
-        head = snakeBody.get(0);
+        head = ((Head) snakeBody.get(0));
         drawSnake();
     }
 
@@ -106,48 +106,79 @@ public class Controller implements Initializable {
     }
 
 
-    /*Checke ob currentDirection != currentDirection vom vorgänger
-     *wenn ja -> prüfe ob position erreicht
-     *      wenn nein
-     *          weiter in Richtung
-     *      wenn ja
-     *          setzte currentDirection = currentDirection vom Vorgänger
-     *Wenn nein, tue nichts / wenn ja, setze Position und...
-     *Gehe in Richtung Currentdirection
-     * */
-
     private void moveBody() {
         for (int i = 1; i < snakeBody.size(); i++) {
             Segment currentSegment = snakeBody.get(i);
-            PositionCoordinates currentSegmentsPosition = new PositionCoordinates(currentSegment.getCenterX(), currentSegment.getCenterY());
-            Direction predecessorsCurrentDirection = snakeBody.get(i - 1).getCurrentDirection();
+            int positionCounter = currentSegment.getPositionCounter();
 
 
-            if (currentSegment.getCurrentDirection() != predecessorsCurrentDirection) {
-                if (!currentSegment.isPositionMarked()) {
-                    switch (currentSegment.getCurrentDirection()) {
-                        case RIGHT:
-                            currentSegment.getPositionOfDirectionChange().addToPos(2 * SnakeSettings.RADIUS, 0);
-                            break;
-                        case LEFT:
-                            currentSegment.getPositionOfDirectionChange().addToPos(-2 * SnakeSettings.RADIUS, 0);
-                            break;
-                        case UP:
-                            currentSegment.getPositionOfDirectionChange().addToPos(0, -2 * SnakeSettings.RADIUS);
-                            break;
-                        case DOWN:
-                            currentSegment.getPositionOfDirectionChange().addToPos(0, 2 * SnakeSettings.RADIUS);
-                            break;
-                    }
-                    currentSegment.setMarkPosition(true);
-                }
-                if (currentSegmentsPosition == currentSegment.getPositionOfDirectionChange()) {
-                    currentSegment.setCurrentDirection(predecessorsCurrentDirection);
-                    currentSegment.setMarkPosition(false);
-                }
+            if(checkPosition(currentSegment)) {
+                HeadMovement headMovement = Snake.getNextPosition(positionCounter);
+                currentSegment.setCurrentDirection(headMovement.getFollowingDirection());
+                currentSegment.incrementPositionCounter();
             }
-            moveInDirection(currentSegment);
 
+            moveInDirection(currentSegment);
+        }
+    }
+
+
+    private boolean checkPosition(Segment currentSegment) {
+        PositionCoordinates currentSegmentsPosition = new PositionCoordinates(currentSegment.getCenterX(), currentSegment.getCenterY());
+        int positionCounter = currentSegment.getPositionCounter();
+        HeadMovement headMovement = Snake.getNextPosition(positionCounter);
+        double nextPosX = -1;
+        double nextPosY = -1;
+
+        if (headMovement != null) {
+            nextPosX = headMovement.getPositionCoordinates().getPosX();
+            nextPosY = headMovement.getPositionCoordinates().getPosY();
+        }
+        return currentSegmentsPosition.getPosX() == nextPosX && currentSegmentsPosition.getPosY() == nextPosY;
+    }
+
+//***********************************
+//    private void moveBody() {
+//        for (int i = 1; i < snakeBody.size(); i++) {
+//            Segment currentSegment = snakeBody.get(i);
+//            PositionCoordinates currentSegmentsPosition = new PositionCoordinates(currentSegment.getCenterX(), currentSegment.getCenterY());
+//            Direction predecessorsCurrentDirection = snakeBody.get(i - 1).getCurrentDirection();
+//            Double posX = currentSegment.getCenterX();
+//            Double posY = currentSegment.getCenterY();
+//
+//
+//            if (currentSegment.getCurrentDirection() != predecessorsCurrentDirection) {
+//                if (!currentSegment.isPositionMarked() && snakeBody.get(0).getCurrentDirection() != Direction.NONE) {
+//                    switch (currentSegment.getCurrentDirection()) {
+//                        case RIGHT:
+//                            currentSegment.setPositionOfDirectionChange(PositionCoordinates.getPositionCoordinates(posX + 2*SnakeSettings.RADIUS, posY));
+//                            break;
+//                        case LEFT:
+//                            currentSegment.setPositionOfDirectionChange(PositionCoordinates.getPositionCoordinates(posX - 2*SnakeSettings.RADIUS, posY));
+//                            break;
+//                        case UP:
+//                            currentSegment.setPositionOfDirectionChange(PositionCoordinates.getPositionCoordinates(posX,posY - 2*SnakeSettings.RADIUS));
+//                            break;
+//                        case DOWN:
+//                            currentSegment.setPositionOfDirectionChange(PositionCoordinates.getPositionCoordinates(posX,posY + 2*SnakeSettings.RADIUS));
+//                            break;
+//                        case NONE:
+//                            currentSegment.setPositionOfDirectionChange(snakeBody.get(0).getPositionOfDirectionChange());
+//                            currentSegment.setCurrentDirection(Direction.RIGHT);
+//                            break;
+//                    }
+//                    currentSegment.setMarkPosition(true);
+//                }
+//            }
+//
+//            if (currentSegmentsPosition.getPosX() == currentSegment.getPositionOfDirectionChange().getPosX() && currentSegmentsPosition.getPosY() == currentSegment.getPositionOfDirectionChange().getPosY()) {
+//                currentSegment.setCurrentDirection(predecessorsCurrentDirection);
+//                currentSegment.setMarkPosition(false);
+//            }
+//
+//            moveInDirection(currentSegment);
+
+//            *******************
 
 //            if (positionOfDirectionChange != null) {
 //                if(!currentSegment.isPositionMarked()) {
@@ -166,8 +197,8 @@ public class Controller implements Initializable {
 //                }
 //            }
 //            moveInDirection(currentSegment);
-        }
-    }
+//        }
+//    }
 
 //
 //    private void moveBody() {

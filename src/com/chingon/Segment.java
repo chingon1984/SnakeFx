@@ -5,10 +5,9 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 
 class Segment extends Circle {
-
     private Direction currentDirection, lastDirection;
-    private boolean positionMarked;
-    private PositionCoordinates positionOfDirectionChange;
+    private int positionCounter;
+
 
     Segment(double centerX, double centerY) {
         this(centerX, centerY, Color.BLACK);
@@ -16,33 +15,24 @@ class Segment extends Circle {
 
     Segment(double centerX, double centerY, Paint fill) {
         super(centerX, centerY, SnakeSettings.RADIUS, fill);
-        currentDirection = Direction.NONE;
-        lastDirection = Direction.NONE;
-        positionMarked = false;
-//        positionOfDirectionChange = new PositionCoordinates(this.getCenterX(), this.getLayoutY());
-    }
-
-    public boolean isPositionMarked() {
-        return positionMarked;
-    }
-
-    public void setMarkPosition(boolean markPosition) {
-        this.positionMarked = markPosition;
+        currentDirection = Direction.RIGHT;
+        lastDirection = Direction.RIGHT;
+        positionCounter = 0;
     }
 
     Direction getCurrentDirection() {
         return currentDirection;
     }
 
-    public void setPositionOfDirectionChange(PositionCoordinates positionOfDirectionChange) {
-        this.positionOfDirectionChange = positionOfDirectionChange;
+    int getPositionCounter() {
+        return positionCounter;
     }
 
     void setCurrentDirection(Direction currentDirection) {
         this.currentDirection = currentDirection;
     }
 
-    void setLastDirection(Direction direction) {
+    private void setLastDirection(Direction direction) {
         lastDirection = direction;
     }
 
@@ -57,10 +47,9 @@ class Segment extends Circle {
             setLastDirection(currentDirection);
 
         setCurrentDirection(direction);
-        positionOfDirectionChange = new PositionCoordinates(this.getCenterX(), this.getCenterY());
     }
 
-    public PositionCoordinates getPositionOfDirectionChange() {
-        return positionOfDirectionChange;
+    public void incrementPositionCounter() {
+        this.positionCounter += 1;
     }
 }

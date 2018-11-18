@@ -16,9 +16,10 @@ public class PositionCoordinates {
         return posY;
     }
 
-    void addToPos(double posX, double posY) {
+    PositionCoordinates addToPos(double posX, double posY) {
         this.posX += posX;
         this.posY += posY;
+        return returnPosition();
     }
 
     public void setPosX(double posX) {
@@ -36,5 +37,9 @@ public class PositionCoordinates {
 
     public static PositionCoordinates getPositionCoordinates(double posX, double posY) {
         return new PositionCoordinates(posX, posY);
+    }
+
+    public PositionCoordinates returnPosition() {
+        return PositionCoordinates.getPositionCoordinates(this.posX,this.posY);
     }
 }
