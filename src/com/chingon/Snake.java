@@ -16,9 +16,6 @@ public class Snake {
         headMovements = new ArrayList<>();
         snakeBody.add(new Head(600 - SnakeSettings.RADIUS, 100, Color.RED));
         setAdditionalSegments(segments);
-//        headPosition = new PositionCoordinates(head.getCenterX(),head.getCenterY());
-//        for(int i=1; i<=segments; i++)
-//            addSegmentToBody();
     }
 
     static void createSnake(int segments) {

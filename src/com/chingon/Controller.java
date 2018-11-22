@@ -76,16 +76,19 @@ public class Controller implements Initializable {
                     else if ((event.getCode() == KeyCode.RIGHT) && (head.getCurrentDirection() != Direction.LEFT))
                         direction = Direction.RIGHT;
 
-                    validateInput(direction);
+                    preventOverlapping(direction);
                 }
         );
         if (savedDirection != Direction.NONE)
-            validateInput(savedDirection);
+            preventOverlapping(savedDirection);
     }
 
-    private void validateInput(Direction direction) {
-//        Direction nextDirection = (savedDirection == Direction.NONE ? direction : savedDirection);
-        Direction nextDirection = (savedDirection != Direction.NONE ? savedDirection : direction);
+    private void preventOverlapping(Direction direction) {
+        /*When "U-Turning" Overlapping of Head with rest of Body is prevented, when next KeyEvent is too soon...
+         * Intended Direction will be saved and used when Overlapping is not possible anymore */
+
+        Direction nextDirection = (savedDirection == Direction.NONE ? direction : savedDirection);
+
         if (checkDistanceBetweenTwoChanges()) {
             switch (nextDirection) {
                 case UP:
@@ -138,12 +141,12 @@ public class Controller implements Initializable {
     }
 
     private boolean checkDistanceBetweenTwoChanges() {
-        double distance = Math.abs(getDistance());
+        double distance = Math.abs(getDistanceBetweenTwoChanges());
         System.out.println("Distance = " + distance);
         return distance == 0 || distance >= 2 * SnakeSettings.RADIUS;
     }
 
-    private double getDistance() {
+    private double getDistanceBetweenTwoChanges() {
         PositionCoordinates currentPosition = new PositionCoordinates(head.getCenterX(), head.getCenterY());
         PositionCoordinates lastPosition = Snake.getHeadCoordinatesFromBehind(0);
 
