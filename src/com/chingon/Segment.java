@@ -26,11 +26,19 @@ class Segment extends Circle {
         return positionCounter;
     }
 
-    void setCurrentDirection(Direction currentDirection) {
+    void saveCurrentDirection(Direction currentDirection) {
         this.currentDirection = currentDirection;
     }
 
     public void incrementPositionCounter() {
         this.positionCounter += 1;
+    }
+
+    public PositionCoordinates getPosition() {
+        return new PositionCoordinates(this.getCenterX(),this.getCenterY());
+    }
+
+    public void setPositionCounter(int positionCounter) {
+        this.positionCounter = positionCounter;
     }
 }

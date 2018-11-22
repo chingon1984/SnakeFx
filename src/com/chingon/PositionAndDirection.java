@@ -1,10 +1,10 @@
 package com.chingon;
 
-public class HeadMovement {
+public class PositionAndDirection {
     private PositionCoordinates positionCoordinates;
     private Direction followingDirection;
 
-    public HeadMovement(PositionCoordinates positionCoordinates, Direction followingDirection) {
+    public PositionAndDirection(PositionCoordinates positionCoordinates, Direction followingDirection) {
         this.positionCoordinates = positionCoordinates;
         this.followingDirection = followingDirection;
     }

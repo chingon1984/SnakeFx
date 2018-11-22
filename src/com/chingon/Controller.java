@@ -30,6 +30,9 @@ public class Controller implements Initializable {
     private void initializeEnvironment() {
         gameBoardHeight = gameBoard.getPrefHeight();
         gameBoardWidth = gameBoard.getPrefWidth();
+
+        SnakeSettings.GAMEBOARD_HEIGHT=gameBoardHeight;
+        SnakeSettings.GAMEBOARD_WIDTH=gameBoardWidth;
     }
 
     private void initializeSnake() {
@@ -76,6 +79,8 @@ public class Controller implements Initializable {
                     else if ((event.getCode() == KeyCode.RIGHT) && (head.getCurrentDirection() != Direction.LEFT))
                         direction = Direction.RIGHT;
 
+//                    TODO grow() only for testing...
+                    grow(10);
                     preventOverlapping(direction);
                 }
         );
@@ -92,16 +97,16 @@ public class Controller implements Initializable {
         if (checkDistanceBetweenTwoChanges()) {
             switch (nextDirection) {
                 case UP:
-                    head.setDirectionAndPosition(Direction.UP);
+                    head.saveDirectionAndPosition(Direction.UP);
                     break;
                 case DOWN:
-                    head.setDirectionAndPosition(Direction.DOWN);
+                    head.saveDirectionAndPosition(Direction.DOWN);
                     break;
                 case LEFT:
-                    head.setDirectionAndPosition(Direction.LEFT);
+                    head.saveDirectionAndPosition(Direction.LEFT);
                     break;
                 case RIGHT:
-                    head.setDirectionAndPosition(Direction.RIGHT);
+                    head.saveDirectionAndPosition(Direction.RIGHT);
                     break;
             }
             savedDirection = Direction.NONE;
@@ -148,7 +153,7 @@ public class Controller implements Initializable {
 
     private double getDistanceBetweenTwoChanges() {
         PositionCoordinates currentPosition = new PositionCoordinates(head.getCenterX(), head.getCenterY());
-        PositionCoordinates lastPosition = Snake.getHeadCoordinatesFromBehind(0);
+        PositionCoordinates lastPosition = Snake.getLatestCoordinates(0);
 
         if (lastPosition != null) {
             double distanceX = currentPosition.getPosX() - lastPosition.getPosX();
@@ -166,8 +171,8 @@ public class Controller implements Initializable {
 
             if (checkIfSegmentPassedSavedPosition(currentSegment)) {
                 int positionCounter = currentSegment.getPositionCounter();
-                HeadMovement headMovement = Snake.getNextPosition(positionCounter);
-                currentSegment.setCurrentDirection(headMovement.getFollowingDirection());
+                PositionAndDirection positionAndDirection = Snake.getNextPosition(positionCounter);
+                currentSegment.saveCurrentDirection(positionAndDirection.getFollowingDirection());
                 currentSegment.incrementPositionCounter();
             }
 
@@ -180,12 +185,12 @@ public class Controller implements Initializable {
         PositionCoordinates currentSegmentsPosition = new PositionCoordinates(currentSegment.getCenterX(), currentSegment.getCenterY());
         int positionCounter = currentSegment.getPositionCounter();
         Direction direction = currentSegment.getCurrentDirection();
-        HeadMovement headMovement = Snake.getNextPosition(positionCounter);
+        PositionAndDirection positionAndDirection = Snake.getNextPosition(positionCounter);
 
 
-        if (headMovement != null) {
-            double nextPosX = headMovement.getPositionCoordinates().getPosX();
-            double nextPosY = headMovement.getPositionCoordinates().getPosY();
+        if (positionAndDirection != null) {
+            double nextPosX = positionAndDirection.getPositionCoordinates().getPosX();
+            double nextPosY = positionAndDirection.getPositionCoordinates().getPosY();
 
 //            CHeck if currentSegment passed the point of direction Change
             switch (direction) {
@@ -212,6 +217,12 @@ public class Controller implements Initializable {
                 segment.setCenterY(gameBoardHeight);
             }
         });
+    }
+
+    private void grow(int amount) {
+        for (int i = 0; i < amount; i++) {
+            gameBoard.getChildren().add(Snake.addSegmentsToBody());
+        }
     }
 
 }

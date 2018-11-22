@@ -12,8 +12,8 @@ public class Head extends Segment {
         Snake.saveHeadCoordinates(this.getCenterX(),this.getCenterY(),getCurrentDirection());
     }
 
-    void setDirectionAndPosition(Direction direction) {
-        setCurrentDirection(direction);
+    void saveDirectionAndPosition(Direction direction) {
+        saveCurrentDirection(direction);
         savePosition();
     }
 }
