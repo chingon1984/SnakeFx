@@ -14,8 +14,8 @@ public class Snake {
     private Snake(int segments) {
         snakeBody = new ArrayList<>();
         headMovements = new ArrayList<>();
-        snakeBody.add(new Head(300, 100, Color.RED));
-        setInitialSegments(segments);
+        snakeBody.add(new Head(600 - SnakeSettings.RADIUS, 100, Color.RED));
+        setAdditionalSegments(segments);
 //        headPosition = new PositionCoordinates(head.getCenterX(),head.getCenterY());
 //        for(int i=1; i<=segments; i++)
 //            addSegmentToBody();
@@ -26,9 +26,10 @@ public class Snake {
             instance = new Snake(segments);
     }
 
-    private static void setInitialSegments(int segments) {
+    private static void setAdditionalSegments(int segments) {
         for (int i = 1; i <= segments; i++) {
-            snakeBody.add(new Segment(300 - 30 * i, 100));
+
+            snakeBody.add(new Segment(600-SnakeSettings.RADIUS - 2*SnakeSettings.RADIUS * i, 100));
         }
 //            addSegmentToBody();
     }

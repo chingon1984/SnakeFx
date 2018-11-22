@@ -20,7 +20,6 @@ public class Controller implements Initializable {
     private ArrayList<Segment> snakeBody;
     private Direction savedDirection;
 
-
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         initializeEnvironment();
@@ -65,30 +64,29 @@ public class Controller implements Initializable {
 
     private void getUserInput() {
         head.setFocusTraversable(true);
+
         head.setOnKeyPressed(event -> {
+                    Direction direction = Direction.NONE;
+                    if ((event.getCode() == KeyCode.UP) && (head.getCurrentDirection() != Direction.DOWN))
+                        direction = Direction.UP;
+                    else if ((event.getCode() == KeyCode.DOWN) && (head.getCurrentDirection() != Direction.UP))
+                        direction = Direction.DOWN;
+                    else if ((event.getCode() == KeyCode.LEFT) && (head.getCurrentDirection() != Direction.RIGHT))
+                        direction = Direction.LEFT;
+                    else if ((event.getCode() == KeyCode.RIGHT) && (head.getCurrentDirection() != Direction.LEFT))
+                        direction = Direction.RIGHT;
 
-            Direction direction = Direction.NONE;
-            if ((event.getCode() == KeyCode.UP) && (head.getCurrentDirection() != Direction.DOWN))
-                direction = Direction.UP;
-//                head.setDirectionAndPosition(Direction.UP);
-            else if ((event.getCode() == KeyCode.DOWN) && (head.getCurrentDirection() != Direction.UP))
-                direction = Direction.DOWN;
-//                head.setDirectionAndPosition(Direction.DOWN);
-            else if ((event.getCode() == KeyCode.LEFT) && (head.getCurrentDirection() != Direction.RIGHT))
-                direction = Direction.LEFT;
-//                head.setDirectionAndPosition(Direction.LEFT);
-            else if ((event.getCode() == KeyCode.RIGHT) && (head.getCurrentDirection() != Direction.LEFT))
-                direction = Direction.RIGHT;
-//                head.setDirectionAndPosition(Direction.RIGHT);
-
-            validateInput(direction);
-        }
+                    validateInput(direction);
+                }
         );
+        if (savedDirection != Direction.NONE)
+            validateInput(savedDirection);
     }
 
     private void validateInput(Direction direction) {
-        Direction nextDirection = (savedDirection == Direction.NONE ? direction : savedDirection);
-        if(checkDistanceBetweenTwoChanges()) {
+//        Direction nextDirection = (savedDirection == Direction.NONE ? direction : savedDirection);
+        Direction nextDirection = (savedDirection != Direction.NONE ? savedDirection : direction);
+        if (checkDistanceBetweenTwoChanges()) {
             switch (nextDirection) {
                 case UP:
                     head.setDirectionAndPosition(Direction.UP);
@@ -104,23 +102,23 @@ public class Controller implements Initializable {
                     break;
             }
             savedDirection = Direction.NONE;
-        }else {
+        } else {
             savedDirection = direction;
         }
     }
 
     private void move() {
         moveHead();
-        moveBody();
+        moveSnakeBody();
     }
 
 
     private void moveHead() {
         if (head.getCurrentDirection() != null)
-            moveInDirection(head);
+            moveSegmentToCurrentDirection(head);
     }
 
-    private void moveInDirection(Segment segment) {
+    private void moveSegmentToCurrentDirection(Segment segment) {
         double X_Segment = segment.getCenterX();
         double Y_Segment = segment.getCenterY();
         switch (segment.getCurrentDirection()) {
@@ -142,14 +140,14 @@ public class Controller implements Initializable {
     private boolean checkDistanceBetweenTwoChanges() {
         double distance = Math.abs(getDistance());
         System.out.println("Distance = " + distance);
-        return  distance == 0 || distance >= 2 * SnakeSettings.RADIUS;
+        return distance == 0 || distance >= 2 * SnakeSettings.RADIUS;
     }
 
     private double getDistance() {
-        PositionCoordinates currentPosition = new PositionCoordinates(head.getCenterX(),head.getCenterY());
+        PositionCoordinates currentPosition = new PositionCoordinates(head.getCenterX(), head.getCenterY());
         PositionCoordinates lastPosition = Snake.getHeadCoordinatesFromBehind(0);
 
-        if(lastPosition != null) {
+        if (lastPosition != null) {
             double distanceX = currentPosition.getPosX() - lastPosition.getPosX();
             double distanceY = currentPosition.getPosY() - lastPosition.getPosY();
 
@@ -159,23 +157,23 @@ public class Controller implements Initializable {
     }
 
 
-    private void moveBody() {
+    private void moveSnakeBody() {
         for (int i = 1; i < snakeBody.size(); i++) {
             Segment currentSegment = snakeBody.get(i);
 
-            if (comparePositions(currentSegment)) {
+            if (checkIfSegmentPassedSavedPosition(currentSegment)) {
                 int positionCounter = currentSegment.getPositionCounter();
                 HeadMovement headMovement = Snake.getNextPosition(positionCounter);
                 currentSegment.setCurrentDirection(headMovement.getFollowingDirection());
                 currentSegment.incrementPositionCounter();
             }
 
-            moveInDirection(currentSegment);
+            moveSegmentToCurrentDirection(currentSegment);
         }
     }
 
 
-    private boolean comparePositions(Segment currentSegment) {
+    private boolean checkIfSegmentPassedSavedPosition(Segment currentSegment) {
         PositionCoordinates currentSegmentsPosition = new PositionCoordinates(currentSegment.getCenterX(), currentSegment.getCenterY());
         int positionCounter = currentSegment.getPositionCounter();
         Direction direction = currentSegment.getCurrentDirection();
@@ -186,15 +184,14 @@ public class Controller implements Initializable {
             double nextPosX = headMovement.getPositionCoordinates().getPosX();
             double nextPosY = headMovement.getPositionCoordinates().getPosY();
 
+//            CHeck if currentSegment passed the point of direction Change
             switch (direction) {
                 case RIGHT:
-                    return currentSegmentsPosition.getPosX() >= nextPosX;
                 case LEFT:
-                    return currentSegmentsPosition.getPosX() <= nextPosX;
+                    return currentSegmentsPosition.getPosX() == nextPosX;
                 case UP:
-                    return currentSegmentsPosition.getPosY() <= nextPosY;
                 case DOWN:
-                    return currentSegmentsPosition.getPosY() >= nextPosY;
+                    return currentSegmentsPosition.getPosY() == nextPosY;
             }
         }
         return false;

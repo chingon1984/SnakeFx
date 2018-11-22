@@ -9,7 +9,7 @@ class Segment extends Circle {
     private int positionCounter;
 
     Segment(double centerX, double centerY) {
-        this(centerX, centerY, Color.BLACK);
+        this(centerX, centerY, Color.WHITE);
     }
 
     Segment(double centerX, double centerY, Paint fill) {

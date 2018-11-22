@@ -14,6 +14,7 @@ public class Main extends Application {
         primaryStage.setResizable(false);
         primaryStage.setTitle("SnakeFX");
 
+
         Scene scene = new Scene(root, 600, 400);
 
         primaryStage.setScene(scene);
