@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
+import javafx.scene.shape.Shape;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -19,6 +20,12 @@ public class Controller implements Initializable {
     private double gameBoardWidth;
     private ArrayList<Segment> snakeBody;
     private Direction savedDirection;
+    private Food food;
+
+
+    private long lastNanoTime = System.nanoTime();
+
+
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -31,8 +38,8 @@ public class Controller implements Initializable {
         gameBoardHeight = gameBoard.getPrefHeight();
         gameBoardWidth = gameBoard.getPrefWidth();
 
-        SnakeSettings.GAMEBOARD_HEIGHT=gameBoardHeight;
-        SnakeSettings.GAMEBOARD_WIDTH=gameBoardWidth;
+        SnakeSettings.GAMEBOARD_HEIGHT = gameBoardHeight;
+        SnakeSettings.GAMEBOARD_WIDTH = gameBoardWidth;
     }
 
     private void initializeSnake() {
@@ -49,20 +56,30 @@ public class Controller implements Initializable {
         });
     }
 
+    private double generateRandomPos(double min, double max) {
+        if(max <= min) {
+            throw new IllegalArgumentException();
+        }
+        return Math.random() * (max - 2*min) + min;
+    }
+
     private void initializeTimer() {
         AnimationTimer animationTimer = new AnimationTimer() {
             @Override
             public void handle(long now) {
-                updateGame();
+                updateGame(now);
             }
         };
         animationTimer.start();
     }
 
-    private void updateGame() {
+    private void updateGame(long now) {
         getUserInput();
         move();
+        checkSnakeCollision();
+        checkFoodCollision();
         checkBorders();
+        createFoodAfterTime(now);
     }
 
     private void getUserInput() {
@@ -80,7 +97,8 @@ public class Controller implements Initializable {
                         direction = Direction.RIGHT;
 
 //                    TODO grow() only for testing...
-                    grow(10);
+                    createFood();
+                    grow(2);
                     preventOverlapping(direction);
                 }
         );
@@ -147,7 +165,7 @@ public class Controller implements Initializable {
 
     private boolean checkDistanceBetweenTwoChanges() {
         double distance = Math.abs(getDistanceBetweenTwoChanges());
-        System.out.println("Distance = " + distance);
+//        System.out.println("Distance = " + distance);
         return distance == 0 || distance >= 2 * SnakeSettings.RADIUS;
     }
 
@@ -205,6 +223,30 @@ public class Controller implements Initializable {
         return false;
     }
 
+
+
+    private void checkSnakeCollision() {
+        checkCollisions(head, 2, 0);
+    }
+
+    private void checkFoodCollision() {
+        checkCollisions(food, 0, snakeBody.size()-1);
+    }
+
+    private boolean checkCollisions(Segment checkSegment, int start, int end) {
+        if(checkSegment == null)
+            return false;
+        for (int i = start; i < snakeBody.size() - end; i++) {
+            Segment segment = snakeBody.get(i);
+            Shape intersectionShape = Shape.intersect(checkSegment, segment);
+            boolean isIntersection = intersectionShape.getBoundsInLocal().getWidth() != -1;
+            if (isIntersection)
+                return true;
+        }
+        return false;
+    }
+
+
     private void checkBorders() {
         snakeBody.forEach(segment -> {
             if (segment.getCenterX() > gameBoardWidth) {
@@ -222,6 +264,25 @@ public class Controller implements Initializable {
     private void grow(int amount) {
         for (int i = 0; i < amount; i++) {
             gameBoard.getChildren().add(Snake.addSegmentsToBody());
+        }
+    }
+
+    private  void createFoodAfterTime(long now) {
+//        TODO create food after some time after last meal...
+    }
+
+    private void createFood() {
+        boolean checker = false;
+        while (!checker) {
+            double posX = generateRandomPos(SnakeSettings.RADIUS, SnakeSettings.GAMEBOARD_WIDTH);
+            double posY = generateRandomPos(SnakeSettings.RADIUS, SnakeSettings.GAMEBOARD_HEIGHT);
+            Food food = new Food(posX,posY);
+
+            if(!checkCollisions(food,0,0)) {
+                this.food = food;
+                gameBoard.getChildren().add(this.food);
+                checker = true;
+            }
         }
     }
 

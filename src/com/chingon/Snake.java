@@ -11,6 +11,7 @@ public class Snake {
     private static Snake instance = null;
 
 
+
     private Snake(int segments) {
         snakeBody = new ArrayList<>();
         positionAndDirections = new ArrayList<>();
@@ -25,9 +26,15 @@ public class Snake {
 
     private static void setAdditionalSegments(int segments) {
         for (int i = 1; i <= segments; i++) {
-
             snakeBody.add(new Segment(600 - SnakeSettings.RADIUS - 2 * SnakeSettings.RADIUS * i, 100));
         }
+        colorizeSegments();
+    }
+
+    private static void colorizeSegments() {
+        for(int i=1; i<=snakeBody.size()-1; i++)
+            if(i % 2 == 1)
+                snakeBody.get(i).setFill(Color.web("#4b5320"));
     }
 
     static ArrayList<Segment> getBody() {
@@ -66,7 +73,6 @@ public class Snake {
         int positionCounter = lastSegment.getPositionCounter();
 
 
-
         PositionCoordinates validCoordinates = new PositionCoordinates(0,0);
         switch (directionOfLastSegment) {
             case RIGHT:
@@ -86,12 +92,24 @@ public class Snake {
         newSegment.saveCurrentDirection(directionOfLastSegment);
         newSegment.setPositionCounter(positionCounter);
         snakeBody.add(newSegment);
+        colorizeSegments();
 
         return newSegment;
     }
 
     private static PositionCoordinates getValidCoordinates(double posX, double posY) {
-//        TODO: return valid Coordinates, in case when added Segment is out of the borders.
+        double diffX = posX - SnakeSettings.GAMEBOARD_WIDTH;
+        double diffY = posY - SnakeSettings.GAMEBOARD_HEIGHT;
+
+        if (diffX > 0) {
+            posX = diffX;
+        } else if (posX < 0) {
+            posX += SnakeSettings.GAMEBOARD_WIDTH;
+        } else if (diffY > 0) {
+            posY = diffY;
+        } else if (posY < 0) {
+            posY += SnakeSettings.GAMEBOARD_HEIGHT;
+        }
         return new PositionCoordinates(posX,posY);
     }
 }
