@@ -28,6 +28,8 @@ public class Controller implements Initializable {
     private boolean isFoodAvailable;
     private int score;
 
+    private long timecheck = 0;
+
 
     private long lastTime;
 
@@ -78,11 +80,19 @@ public class Controller implements Initializable {
         AnimationTimer animationTimer = new AnimationTimer() {
             @Override
             public void handle(long now) {
+                if(timecheck == 0)
+                    timecheck = now;
+
+                long delta = now - timecheck;
+                System.out.println(delta);
+                timecheck = now;
+
                 updateGame(now);
                 if (isGameOver) {
                     this.stop();
                     System.out.println("Your score was: " + score);
                 }
+
             }
         };
         animationTimer.start();
