@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 public class Snake {
     private static ArrayList<Segment> snakeBody;
-    private static ArrayList<PositionAndDirection> positionAndDirections;
+    public static ArrayList<PositionAndDirection> positionAndDirections;
 
     private static Snake instance = null;
 
