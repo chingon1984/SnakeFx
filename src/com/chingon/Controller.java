@@ -84,13 +84,15 @@ public class Controller implements Initializable {
                     timecheck = now;
 
                 long delta = now - timecheck;
-                System.out.println(delta);
-                timecheck = now;
+                if(delta >= 10_000_000) {
+                    System.out.println(delta);
+                    timecheck = now;
 
-                updateGame(now);
-                if (isGameOver) {
-                    this.stop();
-                    System.out.println("Your score was: " + score);
+                    updateGame(now);
+                    if (isGameOver) {
+                        this.stop();
+                        System.out.println("Your score was: " + score);
+                    }
                 }
 
             }
@@ -229,7 +231,7 @@ public class Controller implements Initializable {
         int positionCounter = currentSegment.getPositionCounter();
         Direction direction = currentSegment.getCurrentDirection();
         PositionAndDirection positionAndDirection = Snake.getNextPosition(positionCounter);
-        double delta = 1;
+        double delta = 0.5;
 
 
         if (positionAndDirection != null) {
