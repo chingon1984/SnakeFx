@@ -72,6 +72,22 @@ public class Controller implements Initializable {
         });
     }
 
+    private void deleteSnake() {
+        snakeBody.forEach(segment -> {
+            gameBoard.getChildren().remove(segment);
+        });
+    }
+
+    private void resetGame() {
+        deleteSnake();
+        isGameOver = false;
+        isFoodAvailable = false;
+        lastTime = 0;
+        score = 0;
+        scoreLabel.setText(Integer.toString(score));
+        initializeSnake();
+    }
+
     private double generateRandomPos(double min, double max) {
         return Math.random() * (max - 2 * min) + min;
     }
@@ -80,21 +96,23 @@ public class Controller implements Initializable {
         AnimationTimer animationTimer = new AnimationTimer() {
             @Override
             public void handle(long now) {
-                if(timecheck == 0)
+                if (timecheck == 0)
                     timecheck = now;
 
-                long delta = now - timecheck;
-                if(delta >= 10_000_000) {
-                    System.out.println(delta);
-                    timecheck = now;
+                if (isGameOver) {
+                    long pauseTime = now - timecheck;
+                    if(pauseTime >= 1_000_000_000) {
+                        resetGame();
+                    }
+                } else {
+                    long delta = now - timecheck;
+                    if (delta >= 100_000) {
+                        timecheck = now;
+                        updateGame(now);
 
-                    updateGame(now);
-                    if (isGameOver) {
-                        this.stop();
-                        System.out.println("Your score was: " + score);
+
                     }
                 }
-
             }
         };
         animationTimer.start();
@@ -242,10 +260,10 @@ public class Controller implements Initializable {
             switch (direction) {
                 case RIGHT:
                 case LEFT:
-                    return currentSegmentsPosition.getPosX() <= nextPosX+delta && currentSegmentsPosition.getPosX() >= nextPosX-delta;
+                    return currentSegmentsPosition.getPosX() <= nextPosX + delta && currentSegmentsPosition.getPosX() >= nextPosX - delta;
                 case UP:
                 case DOWN:
-                    return currentSegmentsPosition.getPosY() <= nextPosY+delta && currentSegmentsPosition.getPosY() >= nextPosY-delta;
+                    return currentSegmentsPosition.getPosY() <= nextPosY + delta && currentSegmentsPosition.getPosY() >= nextPosY - delta;
             }
         }
         return false;

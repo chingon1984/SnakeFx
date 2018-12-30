@@ -7,6 +7,8 @@ import java.util.ArrayList;
 public class Snake {
     private static ArrayList<Segment> snakeBody;
     public static ArrayList<PositionAndDirection> positionAndDirections;
+    private static final int START_X = 300;
+    private static final int START_Y = 200;
 
     private static Snake instance = null;
 
@@ -15,18 +17,18 @@ public class Snake {
     private Snake(int segments) {
         snakeBody = new ArrayList<>();
         positionAndDirections = new ArrayList<>();
-        snakeBody.add(new Head(600 - SnakeSettings.RADIUS, 100, Color.RED));
+        snakeBody.add(new Head(START_X - SnakeSettings.RADIUS, START_Y, Color.RED));
         setAdditionalSegments(segments);
     }
 
     static void createSnake(int segments) {
-        if (instance == null)
+//        if (instance == null)
             instance = new Snake(segments);
     }
 
     private static void setAdditionalSegments(int segments) {
         for (int i = 1; i <= segments; i++) {
-            snakeBody.add(new Segment(600 - SnakeSettings.RADIUS - 2 * SnakeSettings.RADIUS * i, 100));
+            snakeBody.add(new Segment(START_X - SnakeSettings.RADIUS - 2 * SnakeSettings.RADIUS * i, START_Y));
         }
         colorizeSegments();
     }
